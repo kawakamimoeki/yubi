@@ -1,34 +1,34 @@
 export interface YubiOption {
-  timeoutDuration: number;
+  delay: number;
   delimiter: string;
 }
 
 export class Yubi {
-  timeoutDuration: number;
+  delay: number;
   delimiter: string;
   timeoutId: number | null;
   keytypeHistory: string[][][];
 
-  constructor(options: YubiOption = { timeoutDuration: 1000, delimiter: "+" }) {
-    this.timeoutDuration = options.timeoutDuration;
+  constructor(options: YubiOption = { delay: 1000, delimiter: "+" }) {
+    this.delay = options.delay;
     this.delimiter = options.delimiter;
     this.timeoutId = null;
     this.keytypeHistory = [];
   }
 
-  set(event: KeyboardEvent) {
+  record(event: KeyboardEvent) {
     const ks: string[][] = [];
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
     this.timeoutId = setTimeout(() => {
       this.keytypeHistory = [];
-    }, this.timeoutDuration);
+    }, this.delay);
     const modifiedMap = {
-      altKey: ["Alt", "alt", "option", "⌥"],
-      ctrlKey: ["ctrl", "control", "⌃"],
-      shiftKey: ["shift", "⇧"],
-      metaKey: ["meta", "command", "cmd", "⌘"],
+      altKey: ["Alt", "alt", "Option", "option", "⌥"],
+      ctrlKey: ["Ctrl", "ctrl", "Control", "control", "⌃"],
+      shiftKey: ["Shift", "shift", "⇧"],
+      metaKey: ["Meta", "meta", "Command", "command", "Cmd", "cmd", "⌘"],
     };
     Object.entries(modifiedMap).forEach(([key, value]) => {
       if (event[key as keyof KeyboardEvent]) {
@@ -36,10 +36,10 @@ export class Yubi {
       }
     });
     const keyMap = {
-      ArrowLeft: ["left"],
-      ArrowRight: ["right"],
-      ArrowUp: ["up"],
-      ArrowDown: ["down"],
+      ArrowLeft: ["left", "arrowLeft", "ArrowLeft"],
+      ArrowRight: ["right", "arrowRight", "ArrowRight"],
+      ArrowUp: ["up", "arrowUp", "ArrowUp"],
+      ArrowDown: ["down", "arrowDown", "ArrowDown"],
     };
     Object.entries(keyMap).forEach(([key, value]) => {
       if (event.key === key) {
@@ -53,7 +53,7 @@ export class Yubi {
     this.keytypeHistory.push(ks);
   }
 
-  eq(expr: string) {
+  match(expr: string) {
     const keytypesExpr = expr
       .split(" ")
       .map((keytype) => keytype.split(this.delimiter));

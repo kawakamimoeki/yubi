@@ -3,13 +3,13 @@ import { Yubi } from "./index.ts";
 
 test("basic", () => {
   const yubi = new Yubi();
-  yubi.set({
+  yubi.record({
     key: "a",
     metaKey: true,
   } as KeyboardEvent);
-  yubi.set({
+  yubi.record({
     key: "b",
     shiftKey: true,
   } as KeyboardEvent);
-  expect(yubi.eq("cmd+a shift+b")).toBeTruthy();
+  expect(yubi.match("cmd+a shift+b")).toBeTruthy();
 });
